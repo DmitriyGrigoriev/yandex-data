@@ -1,0 +1,29 @@
+use_columns: 
+  - uuid
+  - price
+  - transfer_date
+  - post_code
+  - property_type
+  - oldnew
+  - duration
+  - paon
+  - saon
+  - street
+  - locality
+  - towncity
+  - district
+  - country
+  - ppd_category_type
+  - record_status
+
+use_group:
+  - paon
+  - street
+  - locality
+  - towncity
+  - district
+  - country
+
+use_urls:
+  - https://cloud-api.yandex.net/v1/disk/public/resources/download?
+  - https://disk.yandex.ru/d/ZTnv3LiUeqEK5A

@@ -1,0 +1,24 @@
+defaults:
+  - process: process1
+  - model: model1
+  - _self_
+
+raw: 
+  path: ${processed.dir}/${processed.name}
+  chunksize: 1_000_000
+  nrows: 50_000
+
+processed:
+  dir: data/processed
+  name: pp-complete.csv
+  hfd5_name: pp-complete.csv.hdf5
+  hdf5: ${processed.dir}/${processed.hfd5_name}
+  path: ${processed.dir}/${processed.name}
+  chunksize: 5_000_000
+  nrows: None
+
+final:
+  dir: data/final
+  name: final.csv
+  chunksize: 1_000_000
+  path: ${final.dir}/${final.name}
