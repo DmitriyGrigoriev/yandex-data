@@ -27,7 +27,7 @@ HYDRA_CONFIG = None
 
 
 def convert_csv(
-    file=None, chunksize=5_000_000, names=None, nrows=None
+    file=None, chunksize: int = 5_000_000, names: List = [], nrows=None
 ) -> vaex.dataframe.DataFrame:
     """Convert CSV data to HDF5 format"""
     print(f'Converting the file "{file}" from CSV to HDF5 format...')
@@ -118,6 +118,7 @@ def process_export_data(
             encoding="utf-8",
             # compression='gzip'
         )
+        print(f"Result set saved into file {file}")
     else:
         print("The result set is empty. No data will be exported.")
 
@@ -130,10 +131,16 @@ def process_data(config: DictConfig):
     if DEBUG:
         print("Process run in DEBUG mode.")
         chunksize = config.raw.chunksize
-        nrows = config.raw.nrows
+        nrows = config.raw.nrows = (
+            None if config.raw.nrows == "None" else config.raw.nrows
+        )
     else:
-        chunksize = config.process.chunksize
-        nrows = config.process.nrows
+        chunksize = config.processed.chunksize
+        nrows = config.processed.nrows = (
+            None
+            if config.processed.nrows == "None"
+            else config.processed.nrows
+        )
 
     raw_file = raw_file_name(HYDRA_CONFIG)
     hdf5_file = hdf5_file_name(HYDRA_CONFIG)
@@ -148,7 +155,7 @@ def process_data(config: DictConfig):
         )
 
     df_open = open_hdf5_data(file=hdf5_file, nrows=nrows)
-    print(f'Number of rows has been opened "{hdf5_file}": {len(df_open)}')
+    print(f'Number of rows has opened "{hdf5_file}": {len(df_open)}')
 
     df_ppd, _ = add_join_column(
         df_open
