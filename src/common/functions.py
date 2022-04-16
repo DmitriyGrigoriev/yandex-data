@@ -18,7 +18,7 @@ from tqdm import tqdm
 
 load_dotenv(dotenv_path=Path("common/.env"), override=True)
 
-DEBUG = bool(os.getenv("DEBUG"))
+DEBUG = os.getenv("DEBUG") == "True"
 BASE_DIR = str(Path(__file__).parent.parent.parent) + os.path.sep
 
 
