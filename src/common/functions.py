@@ -4,6 +4,7 @@ Common function use in project
 author: Dmitriy Grigorev
 """
 
+import functools
 import os
 import time
 from pathlib import Path
@@ -117,3 +118,39 @@ def download_from_ya_disk(urls, file_path) -> None:
             )
     else:  # HTTP status code 4XX/5XX
         print(f"Download failed: status code {r.status_code}\n{r.text}")
+
+
+def timerit(msg: str = None):
+    """Timer decorator"""
+    from time import perf_counter
+
+    def decorator(fn):
+        """timer wrapper's func"""
+
+        @functools.wraps(fn)
+        def inner(*args, **kwargs):
+            """time_wrapper's doc string"""
+            nonlocal msg
+            start_time = perf_counter()
+            to_execute = fn(*args, **kwargs)
+            end_time = perf_counter()
+            execution_time = end_time - start_time
+            print("=" * 80)
+            if msg is not None:
+                print(
+                    f"{msg} {round(execution_time, 2)}s "
+                    f"= {round(execution_time / 60, 1)}m "
+                    f"= {round((execution_time / 60) / 60, 1)}h"
+                )
+            else:
+                print(
+                    f"Total elapsed time for {fn.__name__} took {round(execution_time, 2)}s "
+                    f"= {round(execution_time / 60, 1)}m "
+                    f"= {round((execution_time / 60) / 60, 1)}h"
+                )
+
+            return to_execute
+
+        return inner
+
+    return decorator

@@ -20,6 +20,7 @@ from src.common.functions import (
     hdf5_file_name,
     out_file_name,
     raw_file_name,
+    timerit,
 )
 
 global HYDRA_CONFIG
@@ -41,6 +42,7 @@ def convert_csv(
     )
 
 
+@timerit(msg="Total elapsed time to open HDF5 file:")
 def open_hdf5_data(file=None, nrows=None) -> vaex.dataframe.DataFrame:
     """Open the HDF5 file"""
     df_open = vaex.open(file)
@@ -53,6 +55,7 @@ def open_hdf5_data(file=None, nrows=None) -> vaex.dataframe.DataFrame:
     return df_open
 
 
+@timerit()
 def process_grouping_data(
     df: vaex.dataframe.DataFrame, groupby: List = []
 ) -> vaex.dataframe.DataFrame:
@@ -65,6 +68,7 @@ def process_grouping_data(
     return df_having
 
 
+@timerit()
 def process_joining_data(
     df: vaex.dataframe.DataFrame,
     dh: vaex.dataframe.DataFrame,
@@ -79,9 +83,9 @@ def process_joining_data(
     :param vaex.dataframe.DataFrame dh: The  DataFrame has contained column as result operation group by.
     :param list groupby: List of columns used in group by.
     """
-    start_time = time.time()
+    # start_time = time.time()
     if len(dh) > 0:
-        print("Start join opereation...")
+        # print("Start join opereation...")
         # Add join column
         dc, join_col_name = add_join_column(dh)
         dj = df.join(dc, on=join_col_name, how="inner", rsuffix="_r")
@@ -89,9 +93,9 @@ def process_joining_data(
         df = dj.dropna()
         # df = dj[~dj[f'{join_col_name}_r'].isna()]
         df = df.drop([x + "_r" for x in groupby])
-        print(
-            f"Total elapsed time for join data: {calculate_elapsed_time(start_time)}"
-        )
+        # print(
+        #     f"Total elapsed time for join data: {calculate_elapsed_time(start_time)}"
+        # )
         # Drop temporary columns after join operation
         df = df.drop([x for x in [join_col_name, f"{join_col_name}_r"]])
     else:
@@ -100,6 +104,7 @@ def process_joining_data(
     return df
 
 
+@timerit()
 def process_export_data(
     df: vaex.dataframe.DataFrame,
     file: str,
